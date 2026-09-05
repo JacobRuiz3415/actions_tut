@@ -12,7 +12,29 @@ with open('feed.yaml', 'r') as file:
 
     channel_element = xml_tree.SubElement(rss_element, 'channel')
 
+    link_prefix = yaml_data['link']
+
     xml_tree.SubElement(channel_element, 'title').text = yaml_data['title']
+    xml_tree.SubElement(channel_element, 'format').text = yaml_data['title']
+    xml_tree.SubElement(channel_element, 'subtitle').text = yaml_data['title']
+    xml_tree.SubElement(channel_element, 'itunes:author').text = yaml_data['title']
+    xml_tree.SubElement(channel_element, 'itunes:image').text = yaml_data['image']
+    xml_tree.SubElement(channel_element, 'language').text = yaml_data['language']
+    xml_tree.SubElement(channel_element, 'lnk').text = link_prefix
+
+    for item in yaml_data[item]:
+        item_element = xml_tree.SubElement(channel_element, 'item')
+        xml_tree.SubElement(item_element, 'itunes:author').text = yaml_data['author']
+        xml_tree.SubElement(item_element, 'description').text = yaml_data['title']
+        xml_tree.SubElement(item_element, 'duration').text = yaml_data['duration']
+        xml_tree.SubElement(item_element, 'pubdate').text = yaml_data['published']
+        xml_tree.SubElement(item_element, 'title').text = yaml_data['title']
+    
+    enclosure = xml_tree.SubElement(item_element, 'enclosure', {
+        url: libk_prefix + item[file],
+        type: 'audio/mpeg',
+        length: item['length']
+    })
 
     output_tree = xml_tree.ElementTree(rss_element)
     output_tree.write('podcast.xml', encoding='UTF-8', xml_declaration=True)
